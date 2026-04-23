@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Fire {
     /**
      * Returns how long it takes for all vulnerable trees to be set on fire if a
@@ -37,25 +40,46 @@ public class Fire {
      */
     public static int timeToBurn(char[][] forest, int matchR, int matchC) {
         if (forest == null) return 0;
-        if (forest[matchR][matchC] != 't') return 0;
-        char[][] burningforest = forest;
+        if (forest[matchR][matchC] == '.') return 0;
+        char[][] burningforest = new char[forest.length][forest[0].length];
+        for (int i  = 0; i < forest.length; i++) {
+            for (int j = 0; j< forest[0].length; j++) {
+                burningforest[i][j] = forest[i][j];
+            }
+        }
+        Queue <int[]> queue = new LinkedList<>();
+        queue.add(new int[]{matchR, matchC, 0});
         burningforest[matchR][matchC] = 'f';
-
         int output = 0;
-        int temp = 0;
+        while(!queue.isEmpty()) {
+            int[] current = queue.poll();
+            boolean spread = false;
 
-        if (matchR<burningforest.length && burningforest[matchR+1][matchC] == 't') temp = timeToBurn(burningforest, matchR+1, matchC);
-        if (temp > output) output = temp;
+            if (matchR<burningforest.length-1 && burningforest[matchR+1][matchC] == 't') {
+                burningforest[matchR+1][matchC] = 'f';
+                queue.add(new int[]{matchR+1, matchC, current[2]+1});
+                spread = true;
+            }
+            
+            if (matchR>0 && burningforest[matchR-1][matchC] == 't') {
+                burningforest[matchR-1][matchC] = 'f';
+                queue.add(new int[]{matchR-1, matchC, current[2]+1});
+                spread = true;
+            }
 
-        if (matchR>0 && burningforest[matchR-1][matchC] == 't') temp = timeToBurn(burningforest, matchR-1, matchC);
-        if (temp > output) output = temp;
+            if (matchC<burningforest[0].length-1 && burningforest[matchR][matchC+1] == 't') {
+                burningforest[matchR][matchC+1] = 'f';
+                queue.add(new int[]{matchR, matchC+1, current[2]+1});
+                spread = true;
+            }
 
-        if (matchC<burningforest[0].length && burningforest[matchR][matchC+1] == 't') temp = timeToBurn(burningforest, matchR, matchC+1);
-        if (temp > output) output = temp;
-
-        if (matchC>0 && burningforest[matchR][matchC-1] == 't') temp = timeToBurn(burningforest, matchR, matchC-1);
-        if (temp > output) output = temp;
-
-        return output +1;
+            if (matchC>0 && burningforest[matchR][matchC-1] == 't') {
+                burningforest[matchR][matchC-1] = 'f';
+                queue.add(new int[]{matchR, matchC-1, current[2]+1});
+                spread = true;
+            }
+            if (spread) output = current[2];
+        }
+        return output;
     }
 }
