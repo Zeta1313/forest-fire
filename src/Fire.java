@@ -40,5 +40,22 @@ public class Fire {
         if (forest[matchR][matchC] != 't') return 0;
         char[][] burningforest = forest;
         burningforest[matchR][matchC] = 'f';
+
+        int output = 0;
+        int temp = 0;
+
+        if (matchR<burningforest.length && burningforest[matchR+1][matchC] == 't') temp = timeToBurn(burningforest, matchR+1, matchC);
+        if (temp > output) output = temp;
+
+        if (matchR>0 && burningforest[matchR-1][matchC] == 't') temp = timeToBurn(burningforest, matchR-1, matchC);
+        if (temp > output) output = temp;
+
+        if (matchC<burningforest[0].length && burningforest[matchR][matchC+1] == 't') temp = timeToBurn(burningforest, matchR, matchC+1);
+        if (temp > output) output = temp;
+
+        if (matchC>0 && burningforest[matchR][matchC-1] == 't') temp = timeToBurn(burningforest, matchR, matchC-1);
+        if (temp > output) output = temp;
+
+        return output +1;
     }
 }
